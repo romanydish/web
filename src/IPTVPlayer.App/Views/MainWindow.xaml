@@ -1,0 +1,105 @@
+<Window x:Class="IPTVPlayer.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        mc:Ignorable="d"
+        Title="IPTV Player Pro" Width="1500" Height="900" MinWidth="1200" MinHeight="720">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230" />
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.ColumnSpan="3" Style="{StaticResource PanelStyle}" Margin="0,0,0,10">
+            <DockPanel>
+                <TextBox Width="300" Margin="8" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                <ComboBox Width="220" Margin="8" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" />
+                <CheckBox Content="Secure Proxy" Margin="8" IsChecked="{Binding UseProxy}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Status}" Margin="8" VerticalAlignment="Center" Foreground="#66DDFF" />
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource PanelStyle}" Margin="0,0,10,10">
+            <DockPanel>
+                <TextBlock Text="Categories" FontWeight="SemiBold" Margin="8" DockPanel.Dock="Top" />
+                <ListBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" Margin="8" />
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource PanelStyle}" Margin="0,0,10,10">
+            <DockPanel>
+                <TextBlock Text="Channels" FontWeight="SemiBold" Margin="8" DockPanel.Dock="Top" />
+                <ListBox ItemsSource="{Binding ChannelsView}" SelectedItem="{Binding SelectedChannel}" Margin="8">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="★" Foreground="Gold" Visibility="{Binding IsFavorite, Converter={StaticResource BoolToVisibility}}" Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="140" />
+            </Grid.RowDefinitions>
+            <Border Style="{StaticResource PanelStyle}" Margin="0,0,0,10">
+                <Grid>
+                    <vlc:VideoView x:Name="VideoViewControl" />
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Padding="10,4" CornerRadius="10" Background="#55000000">
+                        <TextBlock Text="{Binding PlaybackState}" />
+                    </Border>
+                </Grid>
+            </Border>
+            <Border Grid.Row="1" Style="{StaticResource PanelStyle}">
+                <StackPanel>
+                    <TextBlock Text="EPG" Margin="8" FontWeight="SemiBold" />
+                    <ItemsControl ItemsSource="{Binding CurrentEpgItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="8,2">
+                                    <TextBlock Text="{Binding Start, StringFormat={}{0:HH:mm}}" Width="60"/>
+                                    <TextBlock Text="{Binding Title}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Grid.ColumnSpan="3" Style="{StaticResource PanelStyle}">
+            <StackPanel Orientation="Horizontal" Margin="8">
+                <Button Content="Import M3U URL" Command="{Binding ImportM3uUrlCommand}" Margin="4"/>
+                <TextBox Text="{Binding M3uUrl}" Width="260" Margin="4" />
+                <Button Content="Import M3U File" Command="{Binding ImportM3uFileCommand}" Margin="4"/>
+                <TextBox Text="{Binding M3uFilePath}" Width="220" Margin="4" />
+                <Button Content="Xtream Login" Command="{Binding XtreamLoginCommand}" Margin="4"/>
+                <TextBox Text="{Binding XtreamServer}" Width="160" Margin="4" />
+                <TextBox Text="{Binding XtreamUsername}" Width="100" Margin="4" />
+                <PasswordBox x:Name="XtreamPasswordBox" Width="100" Margin="4" PasswordChanged="XtreamPasswordBox_OnPasswordChanged"/>
+                <Button Content="Load EPG" Command="{Binding LoadEpgCommand}" Margin="4"/>
+                <TextBox Text="{Binding EpgPath}" Width="180" Margin="4" />
+                <Button Content="⏮" Command="{Binding PreviousChannelCommand}" Margin="8,4,4,4" />
+                <Button Content="▶" Command="{Binding PlayCommand}" Margin="4" />
+                <Button Content="⏸" Command="{Binding PauseCommand}" Margin="4" />
+                <Button Content="⏹" Command="{Binding StopCommand}" Margin="4" />
+                <Button Content="⏭" Command="{Binding NextChannelCommand}" Margin="4" />
+                <Button Content="☆" Command="{Binding ToggleFavoriteCommand}" Margin="4" />
+                <Slider Width="130" Minimum="0" Maximum="200" Value="{Binding Volume}" Margin="8,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
